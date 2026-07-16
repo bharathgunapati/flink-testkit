@@ -119,7 +119,11 @@ Docker Desktop users can usually skip all of this and run `mvn test` as-is.
 
 ## Use it in your project
 
+Until the first Maven Central release lands, install from source:
+
 ```bash
+git clone https://github.com/bharathgunapati/flink-testkit.git
+cd flink-testkit
 mvn clean install -DskipTests
 ```
 
