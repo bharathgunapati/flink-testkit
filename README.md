@@ -120,9 +120,9 @@ would (not published to Maven Central):
 
 | Module | Demo |
 |---|---|
-| [`examples/kafka`](examples/kafka/) | Kafka → transform → Kafka |
-| [`examples/jdbc`](examples/jdbc/) | Kafka → Postgres JDBC |
-| [`examples/http`](examples/http/) | Apache HttpSink → MockServer |
+| [`examples/kafka`](examples/kafka/) | Enrichment; DLQ / poison routing |
+| [`examples/jdbc`](examples/jdbc/) | Kafka → Postgres; JDBC seed/`awaitRows` |
+| [`examples/http`](examples/http/) | Apache HttpSink; HTTP lookup enrichment |
 
 ```bash
 mvn -pl examples/kafka,examples/jdbc,examples/http -am test

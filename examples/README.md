@@ -4,14 +4,14 @@ Consumer-style sample Flink jobs under `src/main`, tested with flink-testkit
 + MiniCluster under `src/test`. These modules are **not published** to Maven
 Central — they show the POM shape a real project would use.
 
-| Module | What it demonstrates | Harness deps (`test` scope) |
+| Module | Cases | Harness deps (`test` scope) |
 |---|---|---|
-| [`kafka/`](kafka/) | Kafka source → transform → Kafka sink | `flink-testkit-kafka-core` |
-| [`jdbc/`](jdbc/) | Kafka → Postgres JDBC sink | `flink-testkit-kafka-core` + `flink-testkit-jdbc` |
-| [`http/`](http/) | Apache `HttpSink` → MockServer | `flink-testkit-http` |
+| [`kafka/`](kafka/) | Enrichment sink; DLQ / poison routing | `flink-testkit-kafka-core` |
+| [`jdbc/`](jdbc/) | Kafka → Postgres sink; JDBC seed/`awaitRows` only | `flink-testkit-kafka-core` + `flink-testkit-jdbc` |
+| [`http/`](http/) | Apache `HttpSink`; HTTP lookup enrichment | `flink-testkit-http` |
 
-HTTP uses Flink 2.2 + `flink-connector-http` (same line as the http harness
-examples). Kafka/JDBC use the parent Flink profile (`1.20` by default).
+HTTP uses Flink 2.2 + `flink-connector-http`. Kafka/JDBC use the parent Flink
+profile (`1.20` by default).
 
 ```bash
 # from repo root — all consumer examples (+ harness deps)

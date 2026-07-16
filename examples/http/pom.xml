@@ -13,8 +13,8 @@
     <artifactId>flink-testkit-examples-http</artifactId>
     <name>flink-testkit-examples-http</name>
     <description>
-        Consumer-style Apache HttpSink MiniCluster example using flink-testkit-http.
-        Uses Flink 2.2 + flink-connector-http (same line as the http module examples).
+        Consumer-style Apache HTTP sink + lookup MiniCluster examples using
+        flink-testkit-http. Uses Flink 2.2 + flink-connector-http.
     </description>
 
     <properties>
@@ -64,6 +64,26 @@
             <groupId>org.apache.flink</groupId>
             <artifactId>flink-connector-http</artifactId>
             <version>${flink-connector-http.version}</version>
+        </dependency>
+        <dependency>
+            <groupId>org.apache.flink</groupId>
+            <artifactId>flink-table-api-java-bridge</artifactId>
+            <version>${http.example.flink.version}</version>
+        </dependency>
+        <dependency>
+            <groupId>org.apache.flink</groupId>
+            <artifactId>flink-table-planner-loader</artifactId>
+            <version>${http.example.flink.version}</version>
+        </dependency>
+        <dependency>
+            <groupId>org.apache.flink</groupId>
+            <artifactId>flink-table-runtime</artifactId>
+            <version>${http.example.flink.version}</version>
+        </dependency>
+        <dependency>
+            <groupId>org.apache.flink</groupId>
+            <artifactId>flink-json</artifactId>
+            <version>${http.example.flink.version}</version>
         </dependency>
         <dependency>
             <groupId>com.fasterxml.jackson.core</groupId>
