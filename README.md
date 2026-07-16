@@ -112,11 +112,17 @@ You still bring your own Flink + connectors (and Jackson / Testcontainers /
 JUnit / JDBC driver) for the job under test — harness optional deps are not
 transitive on purpose.
 
-### Consumer-style sample modules
+### Where are the examples?
 
-See [`examples/`](examples/) for MiniCluster Flink jobs under `src/main` that
-depend on flink-testkit with `<scope>test</scope>` the way a real project
-would (not published to Maven Central):
+Two layers (on purpose):
+
+1. **Harness fixtures** — under each connector module’s
+   `src/test/java/io/flinktestkit/example` (used to validate the library
+   itself).
+2. **Consumer-style samples** — under [`examples/`](examples/): jobs in
+   `src/main`, tests in `src/test`, with flink-testkit at
+   `<scope>test</scope>` the way a real project would. Not published to
+   Maven Central.
 
 | Module | Demo |
 |---|---|
@@ -185,6 +191,9 @@ List<byte[]> poison = orders.awaitDlqRecords(1, Duration.ofSeconds(10));
 // configure the job with orders.dlqTopicName()
 ```
 
+Full MiniCluster jobs for enrichment + DLQ live in
+[`examples/kafka`](examples/kafka/).
+
 ### JDBC (Postgres)
 
 ```java
@@ -205,6 +214,9 @@ List<Order> rows = orders.awaitRows(1, Duration.ofSeconds(10));
 ```
 
 Use `{table}` in `ddl()` — it is replaced with a unique, quoted table name.
+
+Kafka → JDBC sink and seed/`awaitRows`-only demos:
+[`examples/jdbc`](examples/jdbc/).
 
 ### HTTP (MockServer)
 
@@ -232,6 +244,9 @@ List<ReceivedRequest> hits = customers.awaitRequests(1, Duration.ofSeconds(10));
 
 A unique suffix is appended to `path` for isolation. Use `url()` / `baseUrl()`
 for the job under test.
+
+Full HttpSink + lookup MiniCluster jobs:
+[`examples/http`](examples/http/).
 
 ### Kafka → JDBC (composed)
 
@@ -269,12 +284,8 @@ class FraudDetectionJobTest {
 That's the whole test. No container wiring, no manual `Properties`, no
 `Thread.sleep`.
 
-Working examples live under each module's
-`src/test/java/io/flinktestkit/example` — see `UppercaseJobTest` (Kafka),
-`OrderJdbcSinkJobTest` (Kafka → JDBC), `OrderHttpSinkJobTest` (HTTP sink),
-and `OrderHttpLookupJobTest` (HTTP lookup enrichment). For standalone
-consumer POMs + MiniCluster jobs, see [`examples/`](examples/)
-(Kafka / JDBC / HTTP).
+Copy consumer POMs from [`examples/`](examples/). Broader library fixtures
+also live under each harness module’s `src/test/java/io/flinktestkit/example`.
 
 **Note:** Kafka topics and JDBC tables are created once per test class. If
 you have multiple `@Test` methods sharing the same handles, wait for
