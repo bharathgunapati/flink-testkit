@@ -344,17 +344,8 @@ containers your tests actually touch.
 - HTTP `@HttpEndpoint` / `HttpHandle` (MockServer stub + awaitRequests)
 - Example coverage including Kafka → JDBC, Apache HttpSink, and HTTP lookup
 
-**Explicitly deferred** — see Roadmap:
+**Explicitly deferred:**
 - Fluss, Paimon, savepoints, deep Kafka exactly-once/rebalance work
-
-## Roadmap
-
-| Phase | Scope |
-|---|---|
-| 1–3.5 | Kafka JSON → keys/headers → Avro → DLQ |
-| **JDBC** | Postgres `@JdbcTable` / `TableHandle` |
-| **HTTP (current)** | MockServer + Apache `flink-connector-http` (sink + lookup) |
-| Deferred | Fluss, Paimon, savepoints, retry orchestration |
 
 Contributions and issue reports are welcome — this is intentionally scoped
 small so it can actually ship.
