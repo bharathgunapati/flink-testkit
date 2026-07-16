@@ -6,7 +6,7 @@
 
     <groupId>io.github.bharathgunapati</groupId>
     <artifactId>flink-testkit</artifactId>
-    <version>0.0.1-SNAPSHOT</version>
+    <version>0.0.1</version>
     <packaging>pom</packaging>
 
     <name>flink-testkit</name>
@@ -197,8 +197,8 @@
             1. Namespace io.github.bharathgunapati verified on https://central.sonatype.com
             2. User token in ~/.m2/settings.xml under <server><id>central</id>...
             3. GPG key available to maven-gpg-plugin (gpg installed + secret key)
-          Usage:
-            mvn versions:set -DnewVersion=0.0.1
+          Usage (next release):
+            mvn versions:set -DnewVersion=0.0.2
             mvn -Prelease clean deploy -DskipTests
         -->
         <profile>

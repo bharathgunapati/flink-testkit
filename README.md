@@ -1,4 +1,4 @@
-# flink-testkit (v0.0.1-SNAPSHOT)
+# flink-testkit (v0.0.1)
 
 An **extremely lightweight** integration-testing harness for Flink jobs
 that use Kafka, JDBC (Postgres), and HTTP connectors. Thin layer over
@@ -119,13 +119,7 @@ Docker Desktop users can usually skip all of this and run `mvn test` as-is.
 
 ## Use it in your project
 
-Until the first Maven Central release lands, install from source:
-
-```bash
-git clone https://github.com/bharathgunapati/flink-testkit.git
-cd flink-testkit
-mvn clean install -DskipTests
-```
+Add the modules you need from Maven Central (`0.0.1`):
 
 **JSON Kafka (recommended default):**
 
@@ -133,7 +127,7 @@ mvn clean install -DskipTests
 <dependency>
     <groupId>io.github.bharathgunapati</groupId>
     <artifactId>flink-testkit-kafka-core</artifactId>
-    <version>0.0.1-SNAPSHOT</version>
+    <version>0.0.1</version>
     <scope>test</scope>
 </dependency>
 ```
@@ -144,7 +138,7 @@ mvn clean install -DskipTests
 <dependency>
     <groupId>io.github.bharathgunapati</groupId>
     <artifactId>flink-testkit-kafka-avro</artifactId>
-    <version>0.0.1-SNAPSHOT</version>
+    <version>0.0.1</version>
     <scope>test</scope>
 </dependency>
 ```
@@ -155,7 +149,7 @@ mvn clean install -DskipTests
 <dependency>
     <groupId>io.github.bharathgunapati</groupId>
     <artifactId>flink-testkit-jdbc</artifactId>
-    <version>0.0.1-SNAPSHOT</version>
+    <version>0.0.1</version>
     <scope>test</scope>
 </dependency>
 ```
@@ -166,13 +160,21 @@ mvn clean install -DskipTests
 <dependency>
     <groupId>io.github.bharathgunapati</groupId>
     <artifactId>flink-testkit-http</artifactId>
-    <version>0.0.1-SNAPSHOT</version>
+    <version>0.0.1</version>
     <scope>test</scope>
 </dependency>
 ```
 
 You still bring your own Flink + connectors (and Jackson / Testcontainers /
 JUnit / JDBC driver) for the job under test.
+
+To hack on the harness itself:
+
+```bash
+git clone https://github.com/bharathgunapati/flink-testkit.git
+cd flink-testkit
+mvn clean install -DskipTests
+```
 
 ## Quickstart
 
