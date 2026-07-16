@@ -266,8 +266,10 @@
                             <publishingServerId>central</publishingServerId>
                             <autoPublish>true</autoPublish>
                             <waitUntil>published</waitUntil>
-                            <!-- Sample consumer module — never publish. -->
-                            <excludeArtifacts>flink-testkit-examples</excludeArtifacts>
+                            <!-- Sample consumer modules — never publish. -->
+                            <excludeArtifacts>
+                                flink-testkit-examples,flink-testkit-examples-kafka,flink-testkit-examples-jdbc,flink-testkit-examples-http
+                            </excludeArtifacts>
                         </configuration>
                     </plugin>
                 </plugins>
