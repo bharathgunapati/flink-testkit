@@ -7,7 +7,7 @@
     <parent>
         <groupId>io.flinktestkit</groupId>
         <artifactId>flink-testkit</artifactId>
-        <version>0.3.5-SNAPSHOT</version>
+        <version>0.0.1-SNAPSHOT</version>
     </parent>
 
     <artifactId>flink-testkit-kafka-core</artifactId>

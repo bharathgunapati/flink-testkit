@@ -1,4 +1,4 @@
-# flink-testkit (v0.3.5-SNAPSHOT)
+# flink-testkit (v0.0.1-SNAPSHOT)
 
 An **extremely lightweight** integration-testing harness for Flink jobs
 that use Kafka, JDBC (Postgres), and HTTP connectors. Thin layer over
@@ -113,7 +113,7 @@ mvn clean install -DskipTests
 <dependency>
     <groupId>io.flinktestkit</groupId>
     <artifactId>flink-testkit-kafka-core</artifactId>
-    <version>0.3.5-SNAPSHOT</version>
+    <version>0.0.1-SNAPSHOT</version>
     <scope>test</scope>
 </dependency>
 ```
@@ -124,7 +124,7 @@ mvn clean install -DskipTests
 <dependency>
     <groupId>io.flinktestkit</groupId>
     <artifactId>flink-testkit-kafka-avro</artifactId>
-    <version>0.3.5-SNAPSHOT</version>
+    <version>0.0.1-SNAPSHOT</version>
     <scope>test</scope>
 </dependency>
 ```
@@ -135,7 +135,7 @@ mvn clean install -DskipTests
 <dependency>
     <groupId>io.flinktestkit</groupId>
     <artifactId>flink-testkit-jdbc</artifactId>
-    <version>0.3.5-SNAPSHOT</version>
+    <version>0.0.1-SNAPSHOT</version>
     <scope>test</scope>
 </dependency>
 ```
@@ -146,7 +146,7 @@ mvn clean install -DskipTests
 <dependency>
     <groupId>io.flinktestkit</groupId>
     <artifactId>flink-testkit-http</artifactId>
-    <version>0.3.5-SNAPSHOT</version>
+    <version>0.0.1-SNAPSHOT</version>
     <scope>test</scope>
 </dependency>
 ```
@@ -334,7 +334,7 @@ Example jobs cover map, keyed state, windows, multi-source join, headers,
 Avro, DLQ, and Kafka → JDBC. Docker needs enough memory/CPU for the
 containers your tests actually touch.
 
-## Scope of this release (v0.3.5 + JDBC + HTTP)
+## Scope of this release (v0.0.1-SNAPSHOT + JDBC + HTTP)
 
 **In scope:**
 - Kafka source/sink testing (JSON and Avro)
