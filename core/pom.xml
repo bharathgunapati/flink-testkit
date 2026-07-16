@@ -1,0 +1,28 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<project xmlns="http://maven.apache.org/POM/4.0.0"
+         xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+         xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
+    <modelVersion>4.0.0</modelVersion>
+
+    <parent>
+        <groupId>io.flinktestkit</groupId>
+        <artifactId>flink-testkit</artifactId>
+        <version>0.3.5-SNAPSHOT</version>
+    </parent>
+
+    <artifactId>flink-testkit-core</artifactId>
+    <name>flink-testkit-core</name>
+    <description>
+        Connector-agnostic JUnit 5 entry point (FlinkTestExtension) and SPI
+        interfaces. Kafka, JDBC, and HTTP modules plug in via ServiceLoader.
+    </description>
+
+    <dependencies>
+        <dependency>
+            <groupId>org.junit.jupiter</groupId>
+            <artifactId>junit-jupiter-api</artifactId>
+            <version>${junit.version}</version>
+            <optional>true</optional>
+        </dependency>
+    </dependencies>
+</project>

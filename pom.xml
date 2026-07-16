@@ -1,0 +1,164 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<project xmlns="http://maven.apache.org/POM/4.0.0"
+         xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+         xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
+    <modelVersion>4.0.0</modelVersion>
+
+    <groupId>io.flinktestkit</groupId>
+    <artifactId>flink-testkit</artifactId>
+    <version>0.3.5-SNAPSHOT</version>
+    <packaging>pom</packaging>
+
+    <name>flink-testkit</name>
+    <description>
+        Lightweight integration-testing harness for Flink connectors.
+        Kafka (JSON/Avro/DLQ), JDBC (Postgres), and HTTP (MockServer) share one
+        FlinkTestExtension entry point.
+    </description>
+
+    <modules>
+        <module>core</module>
+        <module>kafka-core</module>
+        <module>kafka-avro</module>
+        <module>jdbc</module>
+        <module>http</module>
+    </modules>
+
+    <properties>
+        <maven.compiler.source>17</maven.compiler.source>
+        <maven.compiler.target>17</maven.compiler.target>
+        <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
+
+        <junit.version>5.10.2</junit.version>
+        <testcontainers.version>1.21.4</testcontainers.version>
+        <kafka-clients.version>3.7.0</kafka-clients.version>
+        <jackson.version>2.17.0</jackson.version>
+        <slf4j.version>2.0.13</slf4j.version>
+        <assertj.version>3.25.3</assertj.version>
+        <avro.version>1.11.3</avro.version>
+        <confluent.version>7.6.1</confluent.version>
+        <postgresql.version>42.7.3</postgresql.version>
+        <mockserver.version>5.15.0</mockserver.version>
+
+        <!--
+          Default Flink line for kafka/jdbc example tests.
+          Override with -Pflink-1.19 or -Pflink-1.20.
+          HTTP examples use http.example.flink.version (Apache connector is 2.2-only today).
+        -->
+        <flink.version>1.20.0</flink.version>
+        <flink-connector-kafka.version>3.2.0-1.19</flink-connector-kafka.version>
+        <flink-connector-jdbc.version>3.2.0-1.19</flink-connector-jdbc.version>
+        <http.example.flink.version>2.2.0</http.example.flink.version>
+        <flink-connector-http.version>1.0.0-2.2</flink-connector-http.version>
+    </properties>
+
+    <dependencyManagement>
+        <dependencies>
+            <dependency>
+                <groupId>io.flinktestkit</groupId>
+                <artifactId>flink-testkit-core</artifactId>
+                <version>${project.version}</version>
+            </dependency>
+            <dependency>
+                <groupId>io.flinktestkit</groupId>
+                <artifactId>flink-testkit-kafka-core</artifactId>
+                <version>${project.version}</version>
+            </dependency>
+            <dependency>
+                <groupId>io.flinktestkit</groupId>
+                <artifactId>flink-testkit-kafka-avro</artifactId>
+                <version>${project.version}</version>
+            </dependency>
+            <dependency>
+                <groupId>io.flinktestkit</groupId>
+                <artifactId>flink-testkit-jdbc</artifactId>
+                <version>${project.version}</version>
+            </dependency>
+            <dependency>
+                <groupId>io.flinktestkit</groupId>
+                <artifactId>flink-testkit-http</artifactId>
+                <version>${project.version}</version>
+            </dependency>
+        </dependencies>
+    </dependencyManagement>
+
+    <build>
+        <pluginManagement>
+            <plugins>
+                <plugin>
+                    <groupId>org.apache.maven.plugins</groupId>
+                    <artifactId>maven-compiler-plugin</artifactId>
+                    <version>3.13.0</version>
+                    <configuration>
+                        <release>17</release>
+                    </configuration>
+                </plugin>
+                <plugin>
+                    <groupId>org.apache.maven.plugins</groupId>
+                    <artifactId>maven-surefire-plugin</artifactId>
+                    <version>3.2.5</version>
+                    <configuration>
+                        <forkCount>1</forkCount>
+                        <reuseForks>true</reuseForks>
+                        <!--
+                          Rancher Desktop: IntelliJ Maven Runner env vars often do not
+                          reach the Surefire fork. Set them here so mvn/IDE runs behave
+                          the same. Safe with Docker Desktop too (socket override is a no-op
+                          when the daemon already exposes /var/run/docker.sock).
+                        -->
+                        <environmentVariables>
+                            <TESTCONTAINERS_RYUK_DISABLED>true</TESTCONTAINERS_RYUK_DISABLED>
+                            <TESTCONTAINERS_DOCKER_SOCKET_OVERRIDE>/var/run/docker.sock</TESTCONTAINERS_DOCKER_SOCKET_OVERRIDE>
+                            <TESTCONTAINERS_HOST_OVERRIDE>localhost</TESTCONTAINERS_HOST_OVERRIDE>
+                        </environmentVariables>
+                    </configuration>
+                </plugin>
+            </plugins>
+        </pluginManagement>
+        <plugins>
+            <plugin>
+                <groupId>org.apache.maven.plugins</groupId>
+                <artifactId>maven-compiler-plugin</artifactId>
+            </plugin>
+            <plugin>
+                <groupId>org.apache.maven.plugins</groupId>
+                <artifactId>maven-surefire-plugin</artifactId>
+            </plugin>
+        </plugins>
+    </build>
+
+    <profiles>
+        <!-- Kafka / JDBC example Flink lines (harness jars themselves stay Flink-agnostic). -->
+        <profile>
+            <id>flink-1.19</id>
+            <properties>
+                <flink.version>1.19.1</flink.version>
+                <flink-connector-kafka.version>3.2.0-1.19</flink-connector-kafka.version>
+                <flink-connector-jdbc.version>3.2.0-1.19</flink-connector-jdbc.version>
+            </properties>
+        </profile>
+        <profile>
+            <id>flink-1.20</id>
+            <activation>
+                <activeByDefault>true</activeByDefault>
+            </activation>
+            <properties>
+                <flink.version>1.20.0</flink.version>
+                <flink-connector-kafka.version>3.2.0-1.19</flink-connector-kafka.version>
+                <flink-connector-jdbc.version>3.2.0-1.19</flink-connector-jdbc.version>
+            </properties>
+        </profile>
+        <!--
+          HTTP examples always need Flink 2.2 + flink-connector-http 1.0.0-2.2 today.
+          Activate explicitly when documenting the HTTP Flink line; kafka/jdbc examples
+          keep using flink.version from flink-1.19 / flink-1.20.
+        -->
+        <profile>
+            <id>flink-2.2-http</id>
+            <properties>
+                <http.example.flink.version>2.2.0</http.example.flink.version>
+                <flink-connector-http.version>1.0.0-2.2</flink-connector-http.version>
+            </properties>
+        </profile>
+    </profiles>
+</project>

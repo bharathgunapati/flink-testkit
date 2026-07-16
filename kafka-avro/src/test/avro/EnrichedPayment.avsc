@@ -1,0 +1,10 @@
+{
+  "type": "record",
+  "name": "EnrichedPayment",
+  "namespace": "io.flinktestkit.example.avro",
+  "fields": [
+    { "name": "paymentId", "type": "string" },
+    { "name": "merchant", "type": "string" },
+    { "name": "amount", "type": "double" }
+  ]
+}
