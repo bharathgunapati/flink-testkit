@@ -309,8 +309,43 @@ admin.deleteTopics(List.of(inputTopic, outputTopic));
 kafka.stop();
 ```
 
-**After** — see the Quickstart above. Same guarantees, none of the ceremony,
-and no fixed-delay flakiness.
+**After** — same scenario with flink-testkit:
+
+```java
+@ExtendWith(FlinkTestExtension.class)
+class UppercaseJobTest {
+
+    @KafkaTopic(valueType = OrderEvent.class)
+    static TopicHandle<OrderEvent> orders;
+
+    @KafkaTopic(valueType = EnrichedOrder.class)
+    static TopicHandle<EnrichedOrder> enrichedOrders;
+
+    @Test
+    void uppercasesCustomerName() throws Exception {
+        JobClient jobClient = UppercaseJob.runAsync(
+            orders.bootstrapServers(), orders.topicName(), enrichedOrders.topicName());
+
+        try {
+            orders.produce(new OrderEvent("order-1", "alice", 42.50));
+
+            List<EnrichedOrder> results = enrichedOrders.awaitRecords(
+                records -> records.stream().anyMatch(r -> "order-1".equals(r.orderId())),
+                Duration.ofSeconds(30));
+
+            EnrichedOrder result = results.stream()
+                .filter(r -> "order-1".equals(r.orderId()))
+                .findFirst()
+                .orElseThrow();
+            assertThat(result.customerName()).isEqualTo("ALICE");
+        } finally {
+            jobClient.cancel();
+        }
+    }
+}
+```
+
+Same guarantees, none of the ceremony, and no fixed-delay flakiness.
 
 ## How it works
 
