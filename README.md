@@ -5,6 +5,22 @@ that use Kafka, JDBC (Postgres), and HTTP connectors. Thin layer over
 Testcontainers: typed produce/await-style APIs, one `FlinkTestExtension`
 entry point.
 
+## Why flink-testkit?
+
+- **Less boilerplate** — no hand-rolled Kafka/Postgres/MockServer container
+  wiring, topic/table naming, or consumer-group bookkeeping in every test.
+- **Less flaky CI** — `produce` / `awaitRecords` / `awaitRows` / `awaitRequests`
+  wait on real completion conditions, not `Thread.sleep`.
+- **One handle, three jobs** — the same `@KafkaTopic` / `@JdbcTable` /
+  `@HttpEndpoint` declaration seeds data, configures the Flink job, and
+  asserts outcomes (one place to get the schema or URL wrong, not three).
+- **Thin classpath** — pull only the modules you need; containers start
+  lazily on first use.
+- **Real connectors** — exercise Kafka, JDBC, and HTTP the way production
+  jobs do, under one `@ExtendWith(FlinkTestExtension.class)`.
+
+See [Before / after](#before--after) for a side-by-side comparison.
+
 ## Modules (keep your classpath thin)
 
 | Artifact | When to use |
