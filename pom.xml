@@ -4,7 +4,7 @@
          xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
     <modelVersion>4.0.0</modelVersion>
 
-    <groupId>io.flinktestkit</groupId>
+    <groupId>io.github.bharathgunapati</groupId>
     <artifactId>flink-testkit</artifactId>
     <version>0.0.1-SNAPSHOT</version>
     <packaging>pom</packaging>
@@ -55,27 +55,27 @@
     <dependencyManagement>
         <dependencies>
             <dependency>
-                <groupId>io.flinktestkit</groupId>
+                <groupId>io.github.bharathgunapati</groupId>
                 <artifactId>flink-testkit-core</artifactId>
                 <version>${project.version}</version>
             </dependency>
             <dependency>
-                <groupId>io.flinktestkit</groupId>
+                <groupId>io.github.bharathgunapati</groupId>
                 <artifactId>flink-testkit-kafka-core</artifactId>
                 <version>${project.version}</version>
             </dependency>
             <dependency>
-                <groupId>io.flinktestkit</groupId>
+                <groupId>io.github.bharathgunapati</groupId>
                 <artifactId>flink-testkit-kafka-avro</artifactId>
                 <version>${project.version}</version>
             </dependency>
             <dependency>
-                <groupId>io.flinktestkit</groupId>
+                <groupId>io.github.bharathgunapati</groupId>
                 <artifactId>flink-testkit-jdbc</artifactId>
                 <version>${project.version}</version>
             </dependency>
             <dependency>
-                <groupId>io.flinktestkit</groupId>
+                <groupId>io.github.bharathgunapati</groupId>
                 <artifactId>flink-testkit-http</artifactId>
                 <version>${project.version}</version>
             </dependency>

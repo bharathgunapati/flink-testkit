@@ -127,7 +127,7 @@ mvn clean install -DskipTests
 
 ```xml
 <dependency>
-    <groupId>io.flinktestkit</groupId>
+    <groupId>io.github.bharathgunapati</groupId>
     <artifactId>flink-testkit-kafka-core</artifactId>
     <version>0.0.1-SNAPSHOT</version>
     <scope>test</scope>
@@ -138,7 +138,7 @@ mvn clean install -DskipTests
 
 ```xml
 <dependency>
-    <groupId>io.flinktestkit</groupId>
+    <groupId>io.github.bharathgunapati</groupId>
     <artifactId>flink-testkit-kafka-avro</artifactId>
     <version>0.0.1-SNAPSHOT</version>
     <scope>test</scope>
@@ -149,7 +149,7 @@ mvn clean install -DskipTests
 
 ```xml
 <dependency>
-    <groupId>io.flinktestkit</groupId>
+    <groupId>io.github.bharathgunapati</groupId>
     <artifactId>flink-testkit-jdbc</artifactId>
     <version>0.0.1-SNAPSHOT</version>
     <scope>test</scope>
@@ -160,7 +160,7 @@ mvn clean install -DskipTests
 
 ```xml
 <dependency>
-    <groupId>io.flinktestkit</groupId>
+    <groupId>io.github.bharathgunapati</groupId>
     <artifactId>flink-testkit-http</artifactId>
     <version>0.0.1-SNAPSHOT</version>
     <scope>test</scope>
