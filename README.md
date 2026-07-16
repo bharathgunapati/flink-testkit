@@ -22,13 +22,13 @@ less flakiness, one place to get the schema or URL wrong.
 
 ### What you get
 
-- **Less boilerplate** — no hand-rolled Kafka/Postgres/MockServer container
-  wiring, topic/table naming, or consumer-group bookkeeping in every test.
+- **Less boilerplate** — no hand-rolled container wiring, topic/table naming,
+  or consumer-group bookkeeping in every test.
 - **Less flaky CI** — `produce` / `awaitRecords` / `awaitRows` / `awaitRequests`
   wait on real completion conditions, not `Thread.sleep`.
 - **One handle, three jobs** — the same `@KafkaTopic` / `@JdbcTable` /
   `@HttpEndpoint` declaration seeds data, configures the Flink job, and
-  asserts outcomes (one place to get the schema or URL wrong, not three).
+  asserts outcomes.
 - **Thin classpath** — pull only the modules you need; containers start
   lazily on first use.
 - **Real connectors** — exercise Kafka, JDBC, and HTTP the way production
@@ -56,81 +56,6 @@ JUnit / Testcontainers / drivers as you already do for Flink tests).
 - Java 17+ (bytecode target 17; CI also runs on JDK 21)
 - Maven 3.8+
 - A working Docker daemon (Docker Desktop, Rancher Desktop, or Colima)
-
-## Support matrix
-
-The published harness jars are **Flink-agnostic** (Flink is test-scoped for
-examples only). CI verifies the following combinations:
-
-| JDK | Flink profile | Modules exercised |
-|---|---|---|
-| 17, 21 | `-Pflink-1.20` (default) | kafka / jdbc examples on Flink 1.20 |
-| 17, 21 | `-Pflink-1.19` | kafka / jdbc examples on Flink 1.19 |
-| 17, 21 | (always) | http examples on Flink 2.2 + `flink-connector-http` |
-
-```bash
-# default (Flink 1.20 examples)
-mvn test
-
-# Flink 1.19 examples
-mvn -Pflink-1.19 test
-```
-
-## Try it in under 10 minutes
-
-```bash
-mvn test
-```
-
-### Docker not found? (Rancher Desktop / Colima)
-
-Testcontainers talks to the Docker socket. Rancher Desktop and Colima do
-not expose `/var/run/docker.sock` by default. IntelliJ's Maven runner also
-does **not** inherit exports from your shell, so you need one of the
-options below.
-
-**Option A — terminal**
-
-```bash
-# Rancher Desktop
-export DOCKER_HOST=unix://$HOME/.rd/docker.sock
-export TESTCONTAINERS_DOCKER_SOCKET_OVERRIDE=/var/run/docker.sock
-export TESTCONTAINERS_HOST_OVERRIDE=localhost
-
-# Colima (typical)
-# export DOCKER_HOST=unix://$HOME/.colima/default/docker.sock
-# export TESTCONTAINERS_DOCKER_SOCKET_OVERRIDE=/var/run/docker.sock
-# export TESTCONTAINERS_HOST_OVERRIDE=localhost
-
-mvn test
-```
-
-**Option B — IntelliJ IDEA**
-
-Settings → Build, Execution, Deployment → Build Tools → Maven → Runner →
-**Environment variables**, then add (use your home path if `$HOME` is not
-expanded):
-
-```text
-DOCKER_HOST=unix://$HOME/.rd/docker.sock
-TESTCONTAINERS_DOCKER_SOCKET_OVERRIDE=/var/run/docker.sock
-TESTCONTAINERS_HOST_OVERRIDE=localhost
-```
-
-For Colima, point `DOCKER_HOST` at `$HOME/.colima/default/docker.sock`
-instead. Apply, then re-run Maven (`clean install` / `test`).
-
-**Option C — symlink once (works for terminal and IntelliJ)**
-
-```bash
-# Rancher Desktop
-sudo ln -sf "$HOME/.rd/docker.sock" /var/run/docker.sock
-
-# Colima
-# sudo ln -sf "$HOME/.colima/default/docker.sock" /var/run/docker.sock
-```
-
-Docker Desktop users can usually skip all of this and run `mvn test` as-is.
 
 ## Use it in your project
 
@@ -183,25 +108,45 @@ Add the modules you need from Maven Central (`0.0.1`):
 You still bring your own Flink + connectors (and Jackson / Testcontainers /
 JUnit / JDBC driver) for the job under test.
 
-To hack on the harness itself:
-
-```bash
-git clone https://github.com/bharathgunapati/flink-testkit.git
-cd flink-testkit
-mvn clean install -DskipTests
-```
-
 ## Quickstart
 
 ### Kafka (JSON)
 
 ```java
-@KafkaTopic(valueType = Transaction.class)
-static TopicHandle<Transaction> input;
+@ExtendWith(FlinkTestExtension.class)
+class MyJobTest {
+
+    @KafkaTopic(valueType = OrderEvent.class)
+    static TopicHandle<OrderEvent> orders;
+
+    @KafkaTopic(valueType = EnrichedOrder.class)
+    static TopicHandle<EnrichedOrder> enrichedOrders;
+
+    @Test
+    void uppercasesCustomerName() throws Exception {
+        JobClient jobClient = UppercaseJob.runAsync(
+            orders.bootstrapServers(), orders.topicName(), enrichedOrders.topicName());
+
+        try {
+            orders.produce(new OrderEvent("order-1", "alice", 42.50));
+
+            List<EnrichedOrder> results = enrichedOrders.awaitRecords(
+                records -> records.stream().anyMatch(r -> "order-1".equals(r.orderId())),
+                Duration.ofSeconds(30));
+
+            assertThat(results)
+                .filteredOn(r -> "order-1".equals(r.orderId()))
+                .extracting(EnrichedOrder::customerName)
+                .containsExactly("ALICE");
+        } finally {
+            jobClient.cancel();
+        }
+    }
+}
 ```
 
 Avro + Schema Registry — `valueType` must be an Avro `SpecificRecord`.
-Schema Registry starts automatically; pass `input.schemaRegistryUrl()` into
+Schema Registry starts automatically; pass `payments.schemaRegistryUrl()` into
 the job:
 
 ```java
@@ -370,11 +315,10 @@ class UppercaseJobTest {
                 records -> records.stream().anyMatch(r -> "order-1".equals(r.orderId())),
                 Duration.ofSeconds(30));
 
-            EnrichedOrder result = results.stream()
-                .filter(r -> "order-1".equals(r.orderId()))
-                .findFirst()
-                .orElseThrow();
-            assertThat(result.customerName()).isEqualTo("ALICE");
+            assertThat(results)
+                .filteredOn(r -> "order-1".equals(r.orderId()))
+                .extracting(EnrichedOrder::customerName)
+                .containsExactly("ALICE");
         } finally {
             jobClient.cancel();
         }
@@ -386,15 +330,11 @@ Same guarantees, none of the ceremony, and no fixed-delay flakiness.
 
 ## How it works
 
-- **`@KafkaTopic` / `@JdbcTable`** on a static typed handle is the single
-  declared contract. That one declaration is reused for seeding data,
-  awaiting outcomes, and configuring the job under test — so there's
-  exactly one place to get the schema wrong, not three.
 - **`FlinkTestExtension`** (in `flink-testkit-core`) composes connector
   plugins via SPI. Each plugin owns JVM-wide singleton containers (started
   once, reused across test classes, torn down via shutdown hook). Per test
-  class it creates freshly named Kafka topics / Postgres tables and injects
-  handles before any `@Test` runs.
+  class it creates freshly named Kafka topics / Postgres tables / HTTP paths
+  and injects handles before any `@Test` runs.
 - **Await helpers** poll with a real completion condition (count or
   predicate) — never `Thread.sleep`, never a shared/stale consumer group.
 - **`@KafkaTopic(format = Format.AVRO)`** starts a shared Schema Registry
@@ -403,8 +343,78 @@ Same guarantees, none of the ceremony, and no fixed-delay flakiness.
   routing assertions.
 
 Example jobs cover map, keyed state, windows, multi-source join, headers,
-Avro, DLQ, and Kafka → JDBC. Docker needs enough memory/CPU for the
-containers your tests actually touch.
+Avro, DLQ, Kafka → JDBC, and HTTP sink/lookup. Docker needs enough
+memory/CPU for the containers your tests actually touch.
+
+## Support matrix
+
+The published harness jars are **Flink-agnostic** (Flink is test-scoped for
+examples only). CI verifies:
+
+| JDK | Flink profile | Modules exercised |
+|---|---|---|
+| 17, 21 | `-Pflink-1.20` (default) | kafka / jdbc examples on Flink 1.20 |
+| 17, 21 | `-Pflink-1.19` | kafka / jdbc examples on Flink 1.19 |
+| 17, 21 | (always) | http examples on Flink 2.2 + `flink-connector-http` |
+
+## Try the examples locally
+
+```bash
+git clone https://github.com/bharathgunapati/flink-testkit.git
+cd flink-testkit
+mvn test                  # Flink 1.20 kafka/jdbc examples (default)
+mvn -Pflink-1.19 test     # Flink 1.19 kafka/jdbc examples
+```
+
+### Docker not found? (Rancher Desktop / Colima)
+
+Testcontainers talks to the Docker socket. Rancher Desktop and Colima do
+not expose `/var/run/docker.sock` by default. IntelliJ's Maven runner also
+does **not** inherit exports from your shell, so you need one of the
+options below.
+
+**Option A — terminal**
+
+```bash
+# Rancher Desktop
+export DOCKER_HOST=unix://$HOME/.rd/docker.sock
+export TESTCONTAINERS_DOCKER_SOCKET_OVERRIDE=/var/run/docker.sock
+export TESTCONTAINERS_HOST_OVERRIDE=localhost
+
+# Colima (typical)
+# export DOCKER_HOST=unix://$HOME/.colima/default/docker.sock
+# export TESTCONTAINERS_DOCKER_SOCKET_OVERRIDE=/var/run/docker.sock
+# export TESTCONTAINERS_HOST_OVERRIDE=localhost
+
+mvn test
+```
+
+**Option B — IntelliJ IDEA**
+
+Settings → Build, Execution, Deployment → Build Tools → Maven → Runner →
+**Environment variables**, then add (use your home path if `$HOME` is not
+expanded):
+
+```text
+DOCKER_HOST=unix://$HOME/.rd/docker.sock
+TESTCONTAINERS_DOCKER_SOCKET_OVERRIDE=/var/run/docker.sock
+TESTCONTAINERS_HOST_OVERRIDE=localhost
+```
+
+For Colima, point `DOCKER_HOST` at `$HOME/.colima/default/docker.sock`
+instead. Apply, then re-run Maven (`clean install` / `test`).
+
+**Option C — symlink once (works for terminal and IntelliJ)**
+
+```bash
+# Rancher Desktop
+sudo ln -sf "$HOME/.rd/docker.sock" /var/run/docker.sock
+
+# Colima
+# sudo ln -sf "$HOME/.colima/default/docker.sock" /var/run/docker.sock
+```
+
+Docker Desktop users can usually skip all of this and run `mvn test` as-is.
 
 ## License
 
