@@ -109,7 +109,18 @@ Add the modules you need from Maven Central (`0.0.1`):
 ```
 
 You still bring your own Flink + connectors (and Jackson / Testcontainers /
-JUnit / JDBC driver) for the job under test.
+JUnit / JDBC driver) for the job under test — harness optional deps are not
+transitive on purpose.
+
+### Consumer-style sample module
+
+See [`examples/`](examples/) for a MiniCluster Flink job under `src/main` that
+depends on `flink-testkit-kafka-core` with `<scope>test</scope>` the way a
+real project would. That module is not published to Maven Central.
+
+```bash
+mvn -pl examples -am test
+```
 
 ## Quickstart
 
@@ -255,7 +266,9 @@ That's the whole test. No container wiring, no manual `Properties`, no
 Working examples live under each module's
 `src/test/java/io/flinktestkit/example` — see `UppercaseJobTest` (Kafka),
 `OrderJdbcSinkJobTest` (Kafka → JDBC), `OrderHttpSinkJobTest` (HTTP sink),
-and `OrderHttpLookupJobTest` (HTTP lookup enrichment).
+and `OrderHttpLookupJobTest` (HTTP lookup enrichment). For a standalone
+consumer POM + MiniCluster job, see [`examples/`](examples/)
+(`OrderEnrichmentJobTest`).
 
 **Note:** Kafka topics and JDBC tables are created once per test class. If
 you have multiple `@Test` methods sharing the same handles, wait for

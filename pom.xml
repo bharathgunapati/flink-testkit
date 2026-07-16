@@ -52,6 +52,7 @@
         <module>kafka-avro</module>
         <module>jdbc</module>
         <module>http</module>
+        <module>examples</module>
     </modules>
 
     <properties>
@@ -265,6 +266,8 @@
                             <publishingServerId>central</publishingServerId>
                             <autoPublish>true</autoPublish>
                             <waitUntil>published</waitUntil>
+                            <!-- Sample consumer module — never publish. -->
+                            <excludeArtifacts>flink-testkit-examples</excludeArtifacts>
                         </configuration>
                     </plugin>
                 </plugins>
