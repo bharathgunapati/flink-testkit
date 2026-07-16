@@ -334,22 +334,6 @@ Example jobs cover map, keyed state, windows, multi-source join, headers,
 Avro, DLQ, and Kafka → JDBC. Docker needs enough memory/CPU for the
 containers your tests actually touch.
 
-## Scope of this release (v0.0.1-SNAPSHOT + JDBC + HTTP)
-
-**In scope:**
-- Kafka source/sink testing (JSON and Avro)
-- Auto-provisioned Schema Registry for `Format.AVRO`
-- Keys + headers; DLQ / poison-message testing
-- Postgres `@JdbcTable` / `TableHandle` (insert, awaitRows)
-- HTTP `@HttpEndpoint` / `HttpHandle` (MockServer stub + awaitRequests)
-- Example coverage including Kafka → JDBC, Apache HttpSink, and HTTP lookup
-
-**Explicitly deferred:**
-- Fluss, Paimon, savepoints, deep Kafka exactly-once/rebalance work
-
-Contributions and issue reports are welcome — this is intentionally scoped
-small so it can actually ship.
-
 ## License
 
 Apache License 2.0 (matching the Flink and Kafka ecosystems this plugs into).
