@@ -38,13 +38,16 @@ See [Before / after](#before--after) for a side-by-side comparison.
 
 ## Modules (keep your classpath thin)
 
-| Artifact | When to use |
-|---|---|
-| `flink-testkit-core` | Always — hosts `FlinkTestExtension` (pulled transitively by connector modules). |
-| `flink-testkit-kafka-core` | Kafka — JSON, keys/headers, DLQ. **No Avro/Confluent.** |
-| `flink-testkit-kafka-avro` | Only if you use `@KafkaTopic(format = Format.AVRO)` |
-| `flink-testkit-jdbc` | Only if you use `@JdbcTable` (Postgres) |
-| `flink-testkit-http` | Only if you use `@HttpEndpoint` (MockServer) |
+| Artifact | Approx. jar size | When to use |
+|---|---|---|
+| `flink-testkit-core` | ~10 KB | Always — hosts `FlinkTestExtension` (pulled transitively by connector modules). |
+| `flink-testkit-kafka-core` | ~25 KB | Kafka — JSON, keys/headers, DLQ. **No Avro/Confluent.** |
+| `flink-testkit-kafka-avro` | ~7 KB | Only if you use `@KafkaTopic(format = Format.AVRO)` |
+| `flink-testkit-jdbc` | ~13 KB | Only if you use `@JdbcTable` (Postgres) |
+| `flink-testkit-http` | ~12 KB | Only if you use `@HttpEndpoint` (MockServer) |
+
+Harness jars are ~7–25 KB each. That is the thin API layer only — your tests
+still bring Testcontainers / Kafka clients / drivers as usual.
 
 Containers start **lazily**: Kafka on first `@KafkaTopic`, Schema Registry
 on first Avro topic, Postgres on first `@JdbcTable`. Core runtime
