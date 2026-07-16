@@ -7,6 +7,21 @@ entry point.
 
 ## Why flink-testkit?
 
+### How is this different from Testcontainers?
+
+flink-testkit **uses** Testcontainers — it does not replace them.
+
+- **Testcontainers** starts real Kafka / Postgres / MockServer in Docker.
+- **flink-testkit** is the Flink-shaped layer on top: typed handles, seed +
+  await helpers, and job config from the same declaration, so you are not
+  re-writing topic/table wiring and `Thread.sleep` loops in every test.
+
+If your Flink connector tests “already use Testcontainers,” they solve
+infrastructure. This harness solves the **test API** — less boilerplate,
+less flakiness, one place to get the schema or URL wrong.
+
+### What you get
+
 - **Less boilerplate** — no hand-rolled Kafka/Postgres/MockServer container
   wiring, topic/table naming, or consumer-group bookkeeping in every test.
 - **Less flaky CI** — `produce` / `awaitRecords` / `awaitRows` / `awaitRequests`
